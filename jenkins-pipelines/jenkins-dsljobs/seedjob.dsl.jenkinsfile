@@ -3,25 +3,34 @@ pipelineJob("example2"){
         cpsScmFlowDefinition {
             scm {
                 gitSCM {
-                    userRemoteConfigs {
+                    userRemoteConfigs { 
                         userRemoteConfig {
                             url("git@github.com:dhirensk/demos.git")
                             credentialsId("github-demo-credential")
+                            name("")
+                            refspec("")
                         }                        
                     }
-                    branch("master")
-                    extensions{
-                        sparseCheckoutPaths {
-                            sparseCheckoutPaths{
-                                sparseCheckoutPath {
-                                    path("jenkins-pipelines")
-                                }   
-                            }
+                    branches {
+                        branchSpec {
+                            name("main")
                         }
-                    }                    
+                    }
+                    // Do not use sparse checkout for pipeline jobs
+                    // extensions{
+                    //     sparseCheckoutPaths {
+                    //         sparseCheckoutPaths{
+                    //             sparseCheckoutPath {
+                    //                 path("jenkins-pipelines")
+                    //             }   
+                    //         }
+                    //     }
+                    // }
+                    browser {}
+                    gitTool('/usr/bin/git')
                 }
             }
-            scriptPath('deployment-pipeline.jenkinsfile')
+            scriptPath('pipeline1.jenkinsfile')
             lightweight(true)
         }
     }
