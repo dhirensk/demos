@@ -25,6 +25,6 @@ freeStyleJob('example') {
         }
     }
     steps {
-        sh ('bash -xe test.sh')
+        shell(readFileFromWorkspace('test.sh'))
     }
 }

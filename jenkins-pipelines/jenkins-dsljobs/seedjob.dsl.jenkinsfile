@@ -1,0 +1,28 @@
+pipelineJob("example2"){
+    definition {
+        cpsScmFlowDefinition {
+            scm {
+                gitSCM {
+                    userRemoteConfigs {
+                        userRemoteConfig {
+                            url("git@github.com:dhirensk/demos.git")
+                            credentialsId("github-demo-credential")
+                        }                        
+                    }
+                    branch("master")
+                    extensions{
+                        sparseCheckoutPaths {
+                            sparseCheckoutPaths{
+                                sparseCheckoutPath {
+                                    path("jenkins-pipelines")
+                                }   
+                            }
+                        }
+                    }                    
+                }
+            }
+            scriptPath('deployment-pipeline.jenkinsfile')
+            lightweight(true)
+        }
+    }
+}
