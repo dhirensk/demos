@@ -16,7 +16,7 @@ pipeline {
                 echo "Sparse Checkout"
                 checkout([
                     $class: 'GitSCM', 
-                    branches: [[name: 'master']],
+                    branches: [[name: 'main']],
                     gitTool: 'git',
                     userRemoteConfigs: [[url: "git@github.com:dhirensk/${params.git_repo_name}.git",credentialsId: "${params.credential_id}"]],
                     extensions: [[ 
