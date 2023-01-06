@@ -14,8 +14,10 @@ freeStyleJob('example') {
             branch('master')
             extensions{
                 sparseCheckoutPaths {
-                    sparseCheckoutPath {
-                        path("scripts")
+                    sparseCheckoutPaths{
+                        sparseCheckoutPath {
+                            path("scripts")
+                        }   
                     }
                 }
             }
