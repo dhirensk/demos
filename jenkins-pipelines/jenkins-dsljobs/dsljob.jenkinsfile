@@ -1,0 +1,28 @@
+freeStyleJob('example') {
+    logRotator {
+        artifactDaysToKeep(10)
+        artifactNumToKeep(10)
+        daysToKeep(-1)
+        numToKeep(10)
+    }
+    scm {
+        git {
+            remote {
+                url("git@github.com:dhirensk/demos.git")
+                credentials("github-demo-credential")                
+            }
+            branch('master')
+            extensions{
+                sparseCheckoutPaths {
+                    sparseCheckoutPath {
+                        path("scripts")
+                    }
+                }
+            }
+
+        }
+    }
+    steps {
+        sh ('bash -xe test.sh')
+    }
+}
