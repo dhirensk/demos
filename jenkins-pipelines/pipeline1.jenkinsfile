@@ -1,0 +1,45 @@
+//TODO: Add rotation of build logs
+def extravars = [:]
+pipeline {
+    agent any
+    triggers {
+        cron('0 8 * * 5')
+    }     
+    parameters {
+            // PIPELINE PARAMETERS
+            choice(name: 'git_repo_name', choices: ['demos', 'demos'], description: 'select the SCM source')
+            string(name: 'credential_id', defaultValue: 'github-demo-credential', description: 'set the credential ID for git access')
+        }    
+    stages {
+        stage('Git-Checkout'){
+            steps{
+                echo "Sparse Checkout"
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: 'main']],
+                    gitTool: 'git',
+                    userRemoteConfigs: [[url: "git@github.com:dhirensk/${params.git_repo_name}.git",credentialsId: "${params.credential_id}"]],
+                    extensions: [[ 
+                        $class: 'SparseCheckoutPaths',
+                        sparseCheckoutPaths: [[path: 'jenkins-pipelines']]
+                        ]]
+                    ])           
+            }
+        }
+        stage('Running Stage 2'){
+            environment {
+                AWS_ACCESS_KEY = "some_credentials"
+            }
+            steps{
+                sh 'printenv'
+                sh('echo "running steps 1"')                                   
+            }
+        }
+    }
+   post { 
+        always { 
+            // notification 
+            echo 'Send Email Notification'         
+        }
+    }     
+}
