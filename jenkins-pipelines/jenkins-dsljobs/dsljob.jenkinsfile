@@ -11,7 +11,7 @@ freeStyleJob('example') {
                 url("git@github.com:dhirensk/demos.git")
                 credentials("github-demo-credential")                
             }
-            branch('master')
+            branch('main')
             extensions{
                 sparseCheckoutPaths {
                     sparseCheckoutPaths{

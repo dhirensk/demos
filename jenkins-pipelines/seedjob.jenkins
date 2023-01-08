@@ -1,0 +1,17 @@
+pipelineJob("pipeline_example1"){
+    definition {
+        cps {
+            sandbox(true)
+            script('pipeline1.jenkinsfile')
+        }
+    }
+}
+pipelineJob("pipeline_example2"){
+    definition {
+        cps {
+            sandbox(true)
+            script('pipeline2.jenkinsfile')
+        }
+    }
+}
+
