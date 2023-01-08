@@ -5,19 +5,19 @@ pipeline {
             steps{
                 checkout([
                     $class: 'GitSCM', 
-                    branches: [name: '*/main'],
-                    userRemoteConfigs: [url: 'git@github.com:dhirensk/demos.git', credentialsId: 'github-demo-credential'],
-                    extensions: [ 
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'git@github.com:dhirensk/demos.git', credentialsId: 'github-demo-credential']],
+                    extensions: [[ 
                         $class: 'SparseCheckoutPaths',
-                        sparseCheckoutPaths: [path: 'jenkins-pipelines' ]
-                        ]
+                        sparseCheckoutPaths: [[path: 'jenkins-pipelines' ]]
+                        ]]
                     ])
             }
+        }
         stage('deploy jobs'){
             steps{
-                jobDsl targets: 'jenkins-dsljobs/seedjob2.dsl.jenkinsfile'
+                jobDsl targets: 'jenkins-dsljobs/seedjob-deploy.jenkinsfile'
             }
-        }
-        }
+        }        
     }
 }
