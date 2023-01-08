@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    stages {
+        stage('SCM checkout'){
+            steps{
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [name: '*/main'],
+                    userRemoteConfigs: [url: 'git@github.com:dhirensk/demos.git', credentialsId: 'github-demo-credential'],
+                    extensions: [ 
+                        $class: 'SparseCheckoutPaths',
+                        sparseCheckoutPaths: [path: 'jenkins-pipelines' ]
+                        ]
+                    ])
+            }
+        stage('deploy jobs'){
+            steps{
+                jobDsl targets: 'jenkins-dsljobs/seedjob2.dsl.jenkinsfile'
+            }
+        }
+        }
+    }
+}
