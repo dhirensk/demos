@@ -2,7 +2,7 @@ pipelineJob("pipeline_example1"){
     definition {
         cps {
             sandbox(true)
-            script(streamFileFromWorkspace('jenkins-pipelines/pipeline1.jenkinsfile'))
+            script(readFileFromWorkspace('jenkins-pipelines/pipeline1.jenkinsfile'))
         }
     }
 }
@@ -10,7 +10,7 @@ pipelineJob("pipeline_example2"){
     definition {
         cps {
             sandbox(true)
-            script(streamFileFromWorkspace('jenkins-pipelines/pipeline2.jenkinsfile'))
+            script(readFileFromWorkspace('jenkins-pipelines/pipeline2.jenkinsfile'))
         }
     }
 }
