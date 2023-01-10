@@ -1,4 +1,10 @@
-pipelineJob("pipeline_example1"){
+folder('project') {
+    displayName('DeploymentFolder')
+    description('Folder for project')
+}
+pipelineJob("project/pipeline_example1"){
+    displayName('Pipeline Example1')
+    description('Example1')    
     definition {
         cps {
             sandbox(true)
@@ -6,7 +12,9 @@ pipelineJob("pipeline_example1"){
         }
     }
 }
-pipelineJob("pipeline_example2"){
+pipelineJob("project/pipeline_example2"){
+    displayName('Pipeline Example2')
+    description('Example2')     
     definition {
         cps {
             sandbox(true)
