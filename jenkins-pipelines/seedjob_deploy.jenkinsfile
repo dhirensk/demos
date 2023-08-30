@@ -18,6 +18,9 @@ pipeline {
             steps{
                 jobDsl targets: 'jenkins-pipelines/seedjob.jenkinsfile'
             }
+            steps{
+                jobDsl targets: 'jenkins-pipelines/seedjob.scm.jenkinsfile'
+            }            
         }        
     }
 }
