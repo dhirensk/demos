@@ -17,7 +17,7 @@ pipeline {
         stage('deploy jobs'){
             steps{
                 jobDsl targets: 'jenkins-pipelines/seedjob.jenkinsfile'
-                jobDsl targets: 'jenkins-pipelines/seedjob.scm.jenkinsfile'
+                jobDsl targets: 'jenkins-pipelines/seedjobscm.jenkinsfile'
             }          
         }        
     }
