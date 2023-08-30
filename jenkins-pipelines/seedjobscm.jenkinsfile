@@ -1,4 +1,9 @@
-pipelineJob("example2"){
+folder('project2') {
+    displayName('DeploymentFolder2')
+    description('Folder for project2')
+}
+
+pipelineJob("project2/pipeline1"){
     definition {
         cpsScmFlowDefinition {
             scm {
@@ -35,7 +40,7 @@ pipelineJob("example2"){
         }
     }
 }
-pipelineJob("example3"){
+pipelineJob("project2/pipeline2"){
     definition {
         cpsScmFlowDefinition {
             scm {
@@ -67,7 +72,7 @@ pipelineJob("example3"){
                     gitTool('/usr/bin/git')
                 }
             }
-            scriptPath('jenkins-pipelines/pipeline1.jenkinsfile')
+            scriptPath('jenkins-pipelines/pipeline2.jenkinsfile')
             lightweight(true)
         }
     }
