@@ -1,0 +1,54 @@
+- name: json manipulation
+  hosts: localhost
+  vars:
+    widget_list:  # scenario 1
+      - image:
+          source: "/images/Sun.gif"
+        attributes:
+          - id: SunSet
+          - size: 10x40
+      - text:
+          source: "/content/static.txt"
+        attributes:
+          - title: Click here
+          - name: text1  
+    widget_dict:    # scenario 2
+      image:
+        source: "/images/Sun.gif"
+        attributes:
+          - id: SunSet
+          - size: 10x40
+      text:
+        source: "/content/static.txt"
+        attributes:
+          - title: Click here
+          - name: text1                  
+
+  tasks:
+
+    - name: widget_list using subelements
+      debug:
+        msg:  "{{ lookup('subelements',widget_list, 'attributes',{'skip_missing': True}) }}"
+
+    - name: loop widget_list using subelements
+      debug:
+        msg: 
+          - "{{ item.0.keys() | first }}"
+          - "{{ item.1[item1_key]}}"
+      loop: "{{ lookup('subelements',widget_list, 'attributes',{'skip_missing': True}) }}"
+      vars:
+        item1_key: "{{ item.1.keys() | first  }}"      
+
+    - name: widget_dict using dict2items and subelements
+      debug:
+        msg: "{{ widget_dict | dict2items | subelements('value.attributes',skip_missing=True) }}"
+
+    - name: loop widget_dict using dict2items and subelements
+      debug:
+        msg: 
+          - "{{ item.0.key }}"
+          - "{{ item.1[item1_key]}}"
+      loop: "{{ widget_dict | dict2items | subelements('value.attributes',skip_missing=True) }}"
+      vars:
+        item1_key: "{{ item.1.keys() | first  }}" # there is always one item in this list
+

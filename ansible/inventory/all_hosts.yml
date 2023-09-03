@@ -1,0 +1,19 @@
+all:
+  children:
+    tst_hive_servers:
+      hosts:
+        tst-hive-primary:
+          ansible_host: 127.0.0.1
+          hostname: tst-hive-1
+        tst-hive-secondary:
+          ansible_host: 127.0.0.1
+          hostname: tst-hive-2
+    prd_hive_servers:
+      hosts:
+        prd-hive-primary:
+          ansible_host: 127.0.0.1
+          hostname: prd-hive-1
+        prd-hive-secondary:
+          ansible_host: 127.0.0.1
+          hostname: prd-hive-2
+    
