@@ -1,0 +1,10 @@
+---
+certs_dir: /home/dhiren/certs_tutorial/nginx  #base directory for certs stuff
+ssl_certificate: server.pem
+ssl_certificate_key: s_private_key.pem
+ssl_client_certificate: CACert.pem
+overwrite_certs: False  # deploy fresh certs
+ssl_password: test123 # password used in private key during certificate creation
+ssl_password_file: global.pass # ssl password file used by nginx server
+nginx_template: proxy   #default/proxy/oauth
+nodejs_app_dir: /home/dhiren/nodejsserver  # nodejs backend app directory

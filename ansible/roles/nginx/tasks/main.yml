@@ -1,0 +1,65 @@
+---
+# tasks file for nginx
+
+- name: render selected template for home_server
+  template:
+    src: "home_server_{{ nginx_template }}.template.j2"
+    dest: "/etc/nginx/home_server.conf"
+    owner: root
+    group: root
+    mode: '644'
+
+- name: render template for main nginx http block
+  template:
+    src: nginx.template.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '644'
+
+- name: add home_server conf to nginx
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: '^(\s*)include /etc/nginx/home_server\.conf;$'
+    insertafter: '^(\s*)include /etc/nginx/conf.d/\*\.conf;$'
+    line: '        include /etc/nginx/home_server.conf;'
+
+- name: comment default server
+  replace:
+    path: /etc/nginx/sites-enabled/default
+    regexp: '^(.+)$'
+    replace: '# \1'
+
+- name: create certs for the nginx server
+  script: mkcerts.sh "{{ certs_dir }}" "{{ ssl_password }}" "{{ ssl_password_file }}"
+  when: overwrite_certs
+  become: False
+
+- name: reload nginx
+  command: "nginx -s reload"
+
+- name: deploy nodejs template
+  template:
+    src: nodejs.template.j2
+    dest: "{{ nodejs_app_dir }}/app.js"
+    mode: '644'
+  become: False
+
+# pre-requisites: install nvm npm express pm2 and initialize a 
+# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+# nvm -v
+# nvm install node
+# npm install pm2
+# mkdir nodejsserver
+# cd nodejsserver
+# npm init   # app.js
+# npm install express
+# dhiren@DSKHOME:~/demos/ansible$ pm2 ls
+# ┌────┬────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+# │ id │ name   │ namespace   │ version │ mode    │ pid      │ uptime │      │ status    │ cpu      │ mem      │ user     │ watching │
+# ├────┼────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+# │ 0  │ app    │ default     │ 1.0.0   │ fork    │ 134118   │ 20m    │ 8    │ online    │ 0%       │ 52.6mb   │ dhiren   │ disabled │
+# └────┴────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+- name: start nodejs server
+  command: "pm2 restart app"
+  become: False
