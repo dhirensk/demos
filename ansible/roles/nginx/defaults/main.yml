@@ -6,5 +6,5 @@ ssl_client_certificate: CACert.pem
 overwrite_certs: False  # deploy fresh certs
 ssl_password: test123 # password used in private key during certificate creation
 ssl_password_file: global.pass # ssl password file used by nginx server
-nginx_template: proxy   #default/proxy/oauth
+nginx_template: proxy   #default/proxy
 nodejs_app_dir: /home/dhiren/nodejsserver  # nodejs backend app directory

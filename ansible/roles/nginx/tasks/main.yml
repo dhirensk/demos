@@ -40,7 +40,7 @@
 
 - name: deploy nodejs template
   template:
-    src: nodejs.template.j2
+    src: "nodejs_{{ nginx_template }}.template.j2"
     dest: "{{ nodejs_app_dir }}/app.js"
     mode: '644'
   become: False
@@ -54,12 +54,11 @@
 # cd nodejsserver
 # npm init   # app.js
 # npm install express
-# dhiren@DSKHOME:~/demos/ansible$ pm2 ls
-# ┌────┬────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
-# │ id │ name   │ namespace   │ version │ mode    │ pid      │ uptime │      │ status    │ cpu      │ mem      │ user     │ watching │
-# ├────┼────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
-# │ 0  │ app    │ default     │ 1.0.0   │ fork    │ 134118   │ 20m    │ 8    │ online    │ 0%       │ 52.6mb   │ dhiren   │ disabled │
-# └────┴────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
 - name: start nodejs server
+  command: "pm2 start {{ nodejs_app_dir }}/app.js"
+  become: False
+  ignore_errors: True
+
+- name: restart nodejs server
   command: "pm2 restart app"
   become: False
