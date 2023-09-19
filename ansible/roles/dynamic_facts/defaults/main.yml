@@ -1,0 +1,36 @@
+---
+# defaults file for dynamic_facts
+secrets_arn: arn:aws:secretsmanager:ap-south-1:347647338398:secret:tst/kafka_principals-whSffz
+kafka_tst:
+  parameters:
+    static:
+      # list of kafka users
+      kafka.principal.read.username1: user_t_read_user1
+      kafka.principal.read.username2: user_t_read_user2
+      kafka.principal.read.username3: user_t_read_user3
+      kafka.principal.read.username4: user_t_read_user4
+      kafka.principal.read.username5: user_t_read_user5
+      kafka.principal.write.username1: user_t_write_user1
+      kafka.principal.write.username2: user_t_write_user2
+      kafka.principal.write.username3: user_t_write_user3
+      kafka.principal.write.username4: user_t_write_user4
+      kafka.principal.write.username5: user_t_write_user5
+    dynamic:
+      # secrets manager key corresponding to the user
+      kafka.principal.read.password1: user_t_read_user1
+      kafka.principal.read.password2: user_t_read_user2
+      kafka.principal.read.password3: user_t_read_user3
+      kafka.principal.read.password4: user_t_read_user4
+      kafka.principal.read.password5: user_t_read_user5
+      kafka.principal.write.password1: user_t_write_user1
+      kafka.principal.write.password2: user_t_write_user2
+      kafka.principal.write.password3: user_t_write_user3
+      kafka.principal.write.password4: user_t_write_user4
+      kafka.principal.write.password5: user_t_write_user5
+
+# e.g. AWS Secrets Manager
+# user_t_read_user1: p@ssw0rd1r
+# user_t_read_user2: p@ssw0rd2r
+# user_t_write_user1: p@ssw0rd1w
+# user_t_write_user2: p@ssw0rd2w
+

@@ -1,0 +1,245 @@
+---
+# defaults file for data_manipulation
+
+mode: check  # default mode is check. Displays new VW/updated configurations but does not apply. Override using extra-var mode=apply
+dwx_envs:
+  tst-env: # name of the dwx env
+    tst-dummy:   # name of the vw
+      skip: true # VW will be skip create/update if set to true. e.g. for testing/updating VWs selectively toggle official ones to false and test ones to true.
+      vwType: hive # hive/impala
+      compactor: false
+      template: xsmall
+      autoscaling: # For xsmall num_executors = 2 per executor group.
+        minClusters: 1 # minimum executors =  minClusters x (num_executors=2) = 2  
+        maxClusters: 2 # maximum executors =  maxClusters x (num_executors=2) = 4
+        disableAutoSuspend: true
+        autoSuspendTimeoutSeconds: 180
+      config:  # place new configs/overrides in this section. Boolean/Integer values should be within double quotes. e.g. "false", "5"
+        applicationConfigs:
+          hiveserver2:
+            configBlocks:
+              - id: hive-site
+                format: HADOOP_XML
+                content:
+                  keyValues: #Important: keep only 1 entry in keyValues dict. Add a new list item at configBlocks level for another entry.
+                    hive.vectorized.execution.enabled: "false"
+              - id: hive-site
+                format: HADOOP_XML
+                content:
+                  keyValues:
+                    hive.vectorized.adaptor.usage.mode: none
+              - id: hive-site
+                format: HADOOP_XML
+                content:
+                  keyValues:
+                    hive.compactor.worker.threads: "3"                                                      
+              - id: hive-atlas-config
+                format: PROPERTIES
+                content:
+                  keyValues:
+                    atlas.hook.hive.hs2.filter.entity.additional.types.to.retain: aws_s3_v2_bucket
+    tst-impala-dummy:
+      skip: true
+      vwType: impala
+      template: xsmall
+      autoscaling:
+        minClusters: 1
+        maxClusters: 2
+        disableAutoSuspend: false
+        autoSuspendTimeoutSeconds: 300
+        enableUnifiedAnalytics: false
+        impalaHighAvailabilityMode: ACTIVE_PASSIVE
+        impalaScaleUpDelaySeconds: 20
+        impalaScaleDownDelaySeconds: 20
+        impalaEnableShutdownOfCoordinator: false
+        impalaNumOfActiveCoordinators: 2
+        impalaEnableCatalogHighAvailability: true
+      config:
+        applicationConfigs:
+          impala-coordinator:
+            configBlocks:
+              - id: flagfile
+                format: FLAGFILE
+                content:
+                  keyValues:
+                    disconnected_session_timeout: "7200"
+              - id: flagfile
+                format: FLAGFILE
+                content:
+                  keyValues:
+                    auto_check_compaction: "true" 
+    # Maintain official CDW configurations                                                     
+    tst-hive:
+      skip: false
+      vwType: hive
+      compactor: false
+      template: xsmall
+      autoscaling: # For xsmall VW number of executor per executor group = 2.  
+        minClusters: 1   # minimum executors =  minClusters x (num_executors=2) = 2
+        maxClusters: 3   # maximum executors =  maxClusters x (num_executors=2) = 6
+        disableAutoSuspend: false
+        autoSuspendTimeoutSeconds: 1800
+      config:  # place new configs/overrides in this section. Boolean/Integer values should be within double quotes. e.g. "false", "5"
+        applicationConfigs:
+          hiveserver2:
+            configBlocks:                                                    
+              - id: hive-atlas-config
+                format: PROPERTIES
+                content:
+                  keyValues:
+                    atlas.hook.hive.hs2.filter.entity.additional.types.to.retain: aws_s3_v2_bucket                                  
+    tst-hive-compactor:
+      skip: false
+      vwType: hive
+      compactor: true
+      template: xsmall
+      autoscaling:
+        minClusters: 1
+        maxClusters: 3
+        disableAutoSuspend: false
+        autoSuspendTimeoutSeconds: 300
+      config: 
+        applicationConfigs:
+          hiveserver2:
+            configBlocks:
+              - id: hive-site
+                format: HADOOP_XML
+                content:
+                  keyValues:
+                    hive.vectorized.adaptor.usage.mode: chosen
+              - id: hive-site
+                format: HADOOP_XML
+                content:
+                  keyValues:
+                    hive.compactor.worker.threads: "5"
+              - id: hive-atlas-config
+                format: PROPERTIES
+                content:
+                  keyValues:
+                    atlas.hook.hive.hs2.filter.entity.additional.types.to.retain: aws_s3_v2_bucket                     
+    tst-impala:
+      skip: false
+      vwType: impala
+      template: xsmall
+      autoscaling:
+        minClusters: 1
+        maxClusters: 3
+        disableAutoSuspend: false
+        autoSuspendTimeoutSeconds: 3600
+        enableUnifiedAnalytics: false
+        impalaHighAvailabilityMode: ACTIVE_PASSIVE
+        impalaScaleUpDelaySeconds: 20
+        impalaScaleDownDelaySeconds: 20
+        impalaEnableShutdownOfCoordinator: false
+        impalaNumOfActiveCoordinators: 2
+        impalaEnableCatalogHighAvailability: true
+      config:
+        applicationConfigs:
+          impala-coordinator:
+            configBlocks:
+              - id: flagfile
+                format: FLAGFILE
+                content:
+                  keyValues:
+                    disconnected_session_timeout: "7200"
+              - id: flagfile
+                format: FLAGFILE
+                content:
+                  keyValues:
+                    auto_check_compaction: "true"
+  cdp-prd-env:
+    prd-hive:
+      skip: false
+      vwType: hive
+      compactor: false
+      template: small
+      autoscaling: # For small VW number of executors per executor group = 10. 
+        minClusters: 1 # minimum executors =  minClusters x (num_executors=10) = 10
+        maxClusters: 2 # maximum executors =  maxClusters x (num_executors=10) = 20
+        disableAutoSuspend: false
+        autoSuspendTimeoutSeconds: 3600
+      config: 
+        applicationConfigs:
+          hiveserver2:
+            configBlocks:
+              - id: hive-site
+                format: HADOOP_XML
+                content:
+                  keyValues:
+                    hive.metastore.client.socket.timeout: 7200s              
+              - id: hive-atlas-config
+                format: PROPERTIES
+                content:
+                  keyValues:
+                    atlas.hook.hive.hs2.filter.entity.additional.types.to.retain: aws_s3_v2_bucket                                                    
+    prd-hive-compactor:
+      skip: false
+      vwType: hive
+      compactor: true
+      template: xsmall
+      autoscaling:
+        minClusters: 1
+        maxClusters: 3
+        disableAutoSuspend: false
+        autoSuspendTimeoutSeconds: 300
+      config: 
+        applicationConfigs:
+          hiveserver2:
+            configBlocks:
+              - id: hive-site
+                format: HADOOP_XML
+                content:
+                  keyValues:
+                    hive.vectorized.adaptor.usage.mode: chosen
+              - id: hive-site
+                format: HADOOP_XML
+                content:
+                  keyValues:
+                    hive.compactor.worker.threads: "10"
+              - id: hive-atlas-config
+                format: PROPERTIES
+                content:
+                  keyValues:
+                    atlas.hook.hive.hs2.filter.entity.additional.types.to.retain: aws_s3_v2_bucket                     
+    prd-impala:
+      skip: false
+      vwType: impala
+      template: xsmall
+      autoscaling:
+        minClusters: 1
+        maxClusters: 6
+        disableAutoSuspend: false
+        autoSuspendTimeoutSeconds: 7200
+        enableUnifiedAnalytics: false
+        impalaHighAvailabilityMode: ACTIVE_PASSIVE
+        impalaScaleUpDelaySeconds: 20
+        impalaScaleDownDelaySeconds: 20
+        impalaEnableShutdownOfCoordinator: false
+        impalaNumOfActiveCoordinators: 2
+        impalaEnableCatalogHighAvailability: true
+      config:
+        applicationConfigs:
+          impala-coordinator:
+            configBlocks:
+              - id: flagfile
+                format: FLAGFILE
+                content:
+                  keyValues:
+                    disconnected_session_timeout: "7200"
+              - id: flagfile
+                format: FLAGFILE
+                content:
+                  keyValues:
+                    auto_check_compaction: "true"  
+
+valid_update_attributes:  # Only below Autoscaling configurations can be updated post VW creation. 
+  - minClusters
+  - maxClusters
+  - disableAutoSuspend
+  - autoSuspendTimeoutSeconds
+  - hiveScaleWaitTimeSeconds
+  - hiveDesiredFreeCapacity
+  - impalaScaleUpDelaySeconds
+  - impalaScaleDownDelaySeconds
+  - impalaShutdownOfCoordinatorDelaySeconds
+  - impalaNumOfActiveCoordinators

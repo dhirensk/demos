@@ -1,0 +1,65 @@
+---
+  # defaults file for data_manipulation
+- name: json manipulation
+  hosts: localhost
+  vars:
+    tst_hive:  # this represents your version controlled configuration maintained in ansible
+      config:
+        applicationConfigs:
+          hiveserver2:
+            configBlocks:
+              - id: hive-site
+                content:
+                  keyValues:
+                    hive.vectorized.adaptor.usage.mode: none
+              - id: hive-site
+                content:
+                  keyValues:
+                    hive.compactor.worker.threads: "3"                                                      
+              - id: hive-atlas-config
+                content:
+                  keyValues:
+                    atlas.hook.hive.hs2.filter.entity.additional.types.to.retain: aws_s3_v2_bucket
+          query-coordinator:
+            configBlocks:
+              - id: flagfile
+                format: FLAGFILE
+                content:
+                  keyValues:
+                    disconnected_session_timeout: "7200"                                      
+    tst_hive_current:  # this represents the configuration retrieved from some rest api via some ansible task
+      config:
+        applicationConfigs:
+          hiveserver2:
+            configBlocks:
+              - id: hive-site
+                content:
+                  keyValues:
+                    hive.vectorized.adaptor.usage.mode: chosen
+              - id: hive-site
+                content:
+                  keyValues:
+                    hive.compactor.worker.threads: "5"                                                      
+              - id: hive-atlas-config
+                content:
+                  keyValues:
+                    atlas.hook.hive.hs2.filter.entity.additional.types.to.retain: aws_s3_v2_bucket
+          query-coordinator:
+            configBlocks:
+              - id: flagfile
+                format: FLAGFILE
+                content:
+                  keyValues:
+                    disconnected_session_timeout: "1800"                      
+  tasks:
+
+    - name: compare existing VW applicationConfig vs from Yaml definition
+      set_fact:
+        app_configs_diff: "{{ app_configs_diff | default({}) | combine({ item.0.key : app_configs_diff[item.0.key] | default({})| combine({item_key: {'new_value': item.1.content.keyValues[item_key], 'existing_value': tst_hive_current | json_query(tst_hive_current_query) | first | default([None])}})}) }}"
+      loop: "{{ tst_hive.config.applicationConfigs | dict2items | subelements('value.configBlocks') }}"
+      vars:
+        item_key: "{{ item.1.content.keyValues.keys() | first }}"
+        tst_hive_current_query: config.applicationConfigs."{{ item.0.key }}".configBlocks[?id== '{{ item.1.id }}'].content.keyValues."{{ item.1.content.keyValues.keys() | first }}"
+
+    - debug:
+        msg: "{{ app_configs_diff }}"

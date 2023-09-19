@@ -1,0 +1,11 @@
+widget_dict:
+  image:
+    source: "/images/Sun.gif"
+    attributes:
+      id: SunSet
+      size: 10x40
+  text:
+    source: "/content/static.txt"
+    attributes:
+      title: Click here
+      name: text1

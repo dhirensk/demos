@@ -1,0 +1,4 @@
+- name: dynamic_facts
+  hosts: localhost
+  roles:
+    - dynamic_facts

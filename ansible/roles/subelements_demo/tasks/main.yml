@@ -1,0 +1,9 @@
+---
+# tasks file for subelements_demo
+
+
+- name: loop
+  include_tasks: subtask.yml
+  loop: "{{ widget_dict | dict2items }}"
+  loop_control:
+    loop_var: main

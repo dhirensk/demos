@@ -1,0 +1,41 @@
+- name: json manipulation
+  hosts: localhost
+  vars:
+    json_data: >
+      {
+        "flowContents": {
+          "processors": [],
+          "parameterContextName": "tstparam"
+        },
+        "parameterContexts": {
+          "tstparam": {
+            "name": "tstparam",
+            "parameters": [
+              {
+                "name": "param1",
+                "value": "1"
+              },
+              {
+                "name": "param2",
+                "value": "2"
+              }
+            ]
+          }
+        }
+      }
+
+  tasks:
+    - name: jq transform using shell
+      shell: >
+          jq 'walk(if type == "object" then with_entries( if .key == "parameterContextName" then .value = "{{ target }}" else . end ) else . end)
+          | .parameterContexts |= with_entries(.key |= sub("^{{ source }}$"; "{{ target }}")) 
+          | .parameterContexts."{{ target }}" |= with_entries(if .key == "name" then .value ="{{ target }}" else . end)'
+      args:  
+        stdin: "{{ json_data | from_json() | to_json() }}"
+      vars:
+        source: tstparam
+        target: prdparam
+      register: transformed
+
+    - debug:
+        msg: "{{ transformed.stdout }}"   

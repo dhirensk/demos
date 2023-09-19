@@ -1,0 +1,20 @@
+---
+# retrieve secret containing list of users and their secrets
+- name: Perform aws secret lookup and register to a variable.
+  command: aws secretsmanager get-secret-value --secret-id "{{ secrets_arn }}"
+  register: secret
+
+# create dynamic facts from default variables
+- name: loop through the machine users and assign them lookedup secret value.
+  set_fact:
+     "{{ item.value }}": "{{ secret.stdout | from_json | json_query('SecretString') | from_json | json_query(item.value)}}"
+  loop: "{{ kafka_tst.parameters.dynamic | dict2items }}"
+
+# create the key:value mapping dynamically
+- name: Create dynamic user:password mapping 
+  set_fact:
+     secret_mapping: "{{ secret_mapping | default({}) | combine({ item.key : lookup( 'vars', item.value) }) }}"
+  loop: "{{ kafka_tst.parameters.dynamic | dict2items }}"
+
+- debug:
+    msg: "{{ secret_mapping }}"

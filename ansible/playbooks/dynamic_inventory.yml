@@ -1,0 +1,26 @@
+
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: set mapping between datahub name and ansible inventory
+      set_fact:
+        inventory_mapping:
+          tst-hive: tst_hive_servers
+          prd-hive: prd_hive_servers
+
+    - name: fail if inventory is not valid
+      fail:
+        msg: "server_name is not valid"
+      when: server_name not in ['tst-hive', 'prd-hive']
+
+    - name: set the target hosts
+      set_fact:
+        hive_hosts: "{{ inventory_mapping[server_name] }}" 
+
+- hosts: "{{ hostvars['localhost']['hive_hosts'] }}"
+  tasks:
+    - name: ping the inventory hosts
+      ping:
+  vars:
+    ansible_user: dhiren
+    ansible_ssh_private_key_file: ~/local_ssh

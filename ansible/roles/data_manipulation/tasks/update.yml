@@ -1,0 +1,168 @@
+# this task compares autoscaling and config:applicationConfig sections of the existing VW with its corresponding defaults/main.yml definition
+# if differences are found then the VW is updated.
+
+- name: reset autoscaling, applicationConfig config diff and app_config to defaults before continuing.
+  set_fact:
+    as_config_diff: {}
+    app_configs_diff: {}
+    app_config_exist: false
+
+- name: Get current state of {{ vw_default_config_item.key }} before updating
+  command: cdp dw describe-vw --cluster-id {{ cluster_id }} --vw-id {{ vw_list | json_query(vw_id_query) | first }}
+  register: describe_vw
+  changed_when: false
+
+- name: Exit if {{ vw_default_config_item.key }} VW not in good state
+  fail:
+    msg: Cannot update VW when status is {{ vw_current_status }}
+  when: current_vw_status in unexpected_vw_status
+  vars:
+    current_vw_status: "{{ describe_vw.stdout | from_json | json_query('vw.status') | lower }}"
+    unexpected_vw_status: ['deleting','failed','error']
+
+
+#################################################################
+#### compare existing Autoscaling configs with yaml configs  ####
+#################################################################
+
+
+- name: compare {{ vw_default_config_item.key }} VW's autoscalingConfig vs defaults/main.yml
+  set_fact:
+    as_config_diff: "{{ as_config_diff|combine({item.key:{'new_value':item.value,'existing_value': describe_vw.stdout|from_json|json_query(upd_query)}})}}"
+  loop: "{{ vw_default_config_item.value.autoscaling | dict2items }}"
+  when: item.value != ( describe_vw.stdout | from_json| json_query(upd_query) )
+  vars:
+    upd_query: "vw.autoscalingOptions.{{item.key}}"
+
+# this task generates a dict of autoscaling Config differences between existing VW and yaml configuration
+# e.g.
+# ok: [127.0.0.1] => {
+#     "msg": {
+#         "autoSuspendTimeoutSeconds": {
+#             "existing_value": 300, 
+#             "new_value": 100
+#         }, 
+#         "disableAutoSuspend": {
+#             "existing_value": false, 
+#             "new_value": true
+#         }, 
+#         "maxClusters": {
+#             "existing_value": 2, 
+#             "new_value": 3
+#         }
+#     }
+# }  
+
+- name: "Autoscaling Config change detected for {{ vw_default_config_item.key }}: {{ (as_config_diff | length > 0) | string| upper }}"
+  debug:
+    msg: "{{ as_config_diff }}"
+  when:  as_config_diff | length > 0
+
+
+#######################################################################
+#### compare existing VW applicationConfig vs from Yaml definition ####
+#######################################################################
+
+# get config history of exist VW
+- name: Get {{ vw_default_config_item.key }} VW's latest config id 
+  command: cdp dw list-vw-configs --cluster-id {{ cluster_id }} --vw-id {{ vw_list | json_query(vw_id_query) | first }}
+  register: list_vs_configs
+  vars:
+    vw_id: "{{ vw_list | json_query(vw_id_query) | first }}"
+  changed_when: false
+
+
+- name: get {{ vw_default_config_item.key }} VW's latest deployed config using config if
+  command: cdp dw describe-config --cluster-id {{ cluster_id }} --config-id {{ list_vs_configs.stdout | from_json | json_query(config_id_query) }}
+  register: latest_vw_config
+  vars:
+    config_id_query: "sort_by(configHistory, &from)[-1].configId"
+  changed_when: false
+
+
+- name: Check if custom applicationConfig provided in defaults/main.yml for {{ vw_default_config_item.key }}
+  set_fact:
+    app_config_exist: true
+  loop: "{{ lookup('dict', vw_default_config_item.value )}}"
+  when:  item.value.applicationConfigs is defined
+
+
+- name: Compare {{ vw_default_config_item.key }} VW's current applicationconfig vs defaults/main.yml
+  block:
+  - name: compare existing VW applicationConfig vs from Yaml definition
+    set_fact:
+      app_configs_diff: "{{ app_configs_diff | combine({ item.0.key : app_configs_diff[item.0.key] | default({})| combine({item_key: {'new_value': item.1.content.keyValues[item_key], 'existing_value': latest_vw_config.stdout | from_json | json_query(upd_app_qry) | first | default([None])}})}) }}"
+    loop: "{{ vw_default_config_item.value.config.applicationConfigs | dict2items | subelements('value.configBlocks') }}"
+    when: (item.1.content.keyValues[item_key]) != (latest_vw_config.stdout | from_json | json_query(upd_app_qry) | first | default([None]))
+    vars:
+      item_id: "{{ item.1.id}}"
+      item_format: "{{ item.1.format }}"
+      item_key: "{{ item.1.content.keyValues.keys()[0]}}"
+      upd_app_qry: config.applicationConfigs."{{ item.0.key }}".configBlocks[?id== '{{ item.1.id }}'].content.keyValues."{{ item.1.content.keyValues.keys()[0] }}"
+  when: app_config_exist
+
+# this task generates a dict of applicationConfig differences between existing VW and yaml configs e.g.
+# e.g.
+# ok: [127.0.0.1] => {
+#     "msg": {
+#         "hiveserver2": {
+#             "hive.compactor.worker.threads": {
+#                 "existing_value": "5", 
+#                 "new_value": "3"
+#             }, 
+#             "hive.vectorized.adaptor.usage.mode": {
+#                 "existing_value": "chosen", 
+#                 "new_value": "none"
+#             }, 
+#             "hive.vectorized.execution.enabled": {
+#                 "existing_value": "false", 
+#                 "new_value": "true"
+#             }
+#         }
+#     }
+# }
+
+- name: "Application Config Change Detected for {{ vw_default_config_item.key }} VW: {{ (app_configs_diff | length > 0) | string| upper }}" 
+  debug:
+    msg: "{{ app_configs_diff }}"
+  when: app_configs_diff | length > 0
+
+
+- name: set VW update template for {{ vw_default_config_item.key }}
+  set_fact:
+    vw_update_template: "{{ lookup('template', path ) | to_json }}"
+  vars:
+    path: "{{role_path}}/templates/vw_update_template.json.j2"
+    vw_id: "{{ vw_list | json_query(vw_id_query) | first }}"
+    vw_autoscaling: "{{ vw_default_config_item.value.autoscaling | ansible.utils.keep_keys(target=valid_update_attributes)| to_json }}"
+    vw_config: "{{ vw_default_config_item.value.config | to_json if vw_default_config_item.value.config is defined else '' }}"
+
+
+- name: "\U00003030 UPDATE: VW {{ vw_default_config_item.key}} with below config"
+  debug:
+    msg: "{{ vw_update_template }}"
+  when: (as_config_diff | length > 0) or (app_configs_diff | length > 0)
+
+
+# update-vw does not generate stdout/stdout_lines
+- name: "APPLY mode \U00003030 UPDATE {{ vw_default_config_item.key}} VW"
+  block:
+  # When VW is created during the play it is necessary to check for valid state before it can be updated.
+  # Even when VW is existing this step checks if the state is valid, because VW frequently change state 
+  # between running/stopped based on autoSuspend configuration.
+  - name: Check if {{ vw_default_config_item.key }} is in acceptable state for Update up to maximum 15 minutes
+    command: cdp dw describe-vw --cluster-id {{ cluster_id }} --vw-id {{ vw_list | json_query(vw_id_query) | first }}
+    register: describe_vw
+    vars:
+      current_vw_status: "{{ describe_vw.stdout | from_json|  json_query('vw.status') | lower }}"
+      expected_vw_status: ['running','stopped']
+    until: current_vw_status in expected_vw_status
+    delay: 60
+    retries: 15
+    changed_when: false  
+
+  - name: "APPLY mode \U00003030 UPDATE: running cdp dw update-vw on {{ vw_default_config_item.key}} VW"
+    command: cdp dw update-vw --cli-input-json {{ vw_update_template | quote }}
+    when: ((as_config_diff | length > 0) or (app_configs_diff | length > 0))
+  when: 
+    - mode == "apply"
