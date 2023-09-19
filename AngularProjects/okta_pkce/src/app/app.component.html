@@ -1,0 +1,58 @@
+<div class="navbar">
+  <mat-toolbar class="mytoolbar" color="primary">
+    <a mat-button href="#">My App</a>
+    <span class="example-spacer">dhirendrakhanka.wordpress.com</span>
+    <button mat-icon-button [routerLink]="['']" matTooltip="Home">
+      <mat-icon>home</mat-icon>
+    </button>
+    <ng-container *ngIf="(isAuthenticated$ | async) === true">
+      <button mat-button matTooltip="Verify" [routerLink]="['validate']">
+        Verify
+        <!-- <mat-icon>lock</mat-icon> -->
+      </button>
+    </ng-container> 
+    <ng-container *ngIf="(isAuthenticated$ | async) === false; else signout">
+      <button mat-icon-button (click)="signIn()" matTooltip="Login">
+        <mat-icon>person</mat-icon>
+      </button>
+    </ng-container>
+
+    <ng-template #signout>
+      <button mat-icon-button (click)="signOut()" matTooltip="LogOff">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </ng-template>
+  </mat-toolbar>
+</div>
+
+<!-- <header>
+  <div class="title">
+    <a href="#" class="logo">MyApp</a>
+    <nav>
+      <ul>
+        <li><a href="#" routerLink="/validate">ValidateToken</a></li>
+        <li>
+          <ng-container *ngIf="(isAuthenticated$ | async) === false; else signout">
+            <button (click)="signIn()">Sign in </button>
+          </ng-container>
+
+          <ng-template #signout>
+            <button (click)="signOut()">Sign out</button>
+          </ng-template>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header> -->
+
+
+<div class="container">
+  <!-- <ul>
+    <li><a href="https://developer.okta.com/docs/guides/implement-grant-type/authcodepkce/main/">Authorization
+        Code flow with PKCE</a></li>
+    <li><a href="https://developer.okta.com/docs/guides/sign-into-spa-redirect/angular/main/">Sign users in to
+        your SPA using the redirect model</a></li>
+    <li><a href="https://github.com/okta/okta-jwt-verifier-js#example-return-values-of-verifyidtoken-and-verifyaccesstoken">Okta JWT Verifier for Node.js</a></li>
+  </ul> -->
+  <router-outlet></router-outlet>
+</div>

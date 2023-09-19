@@ -1,0 +1,58 @@
+<!-- <div class="login" *ngIf="idtoken$ | async"> -->
+<div class="mat-typography">
+<div class="login" *ngIf="idtoken">
+    <div class="left"></div>
+    <div class="container </div>">
+
+        <div class="token">
+            <div class="mat-h3">Access Token</div>
+            <table>
+                <!-- <ng-container *ngFor="let item of idtoken$ | async | keyvalue"> -->
+                <ng-container *ngFor="let item of accesstoken | keyvalue">
+                    <tr>
+                        <td class="key">{{item.key}}</td>
+                        <td class="value">{{item.value}}</td>
+                    </tr>
+                </ng-container>
+            </table>
+        </div>
+        <div class="token">
+            <div class="mat-h3">Access Token Claims</div>
+            <table>
+                <!-- <ng-container *ngFor="let item of idtoken$ | async | keyvalue"> -->
+                <ng-container *ngFor="let item of accesstokenclaims | keyvalue">
+                    <tr>
+                        <td class="key">{{item.key}}</td>
+                        <td class="value">{{item.value}}</td>
+                    </tr>
+                </ng-container>
+            </table>
+        </div>        
+        <div class="token">
+            <div class="mat-h3">IDToken</div>
+            <table>
+                <!-- <ng-container *ngFor="let item of idtoken$ | async | keyvalue"> -->
+                <ng-container *ngFor="let item of idtoken | keyvalue">
+                    <tr>
+                        <td class="key">{{item.key}}</td>
+                        <td class="value">{{item.value}}</td>
+                    </tr>
+                </ng-container>
+            </table>
+        </div>            
+        <div class="token">
+            <div class="mat-h3">IDToken Claims</div>
+            <table>
+                <!-- <ng-container *ngFor="let item of claims$ | async | keyvalue"> -->
+                <ng-container *ngFor="let item of idtokenclaims | keyvalue">
+                    <tr>
+                        <td class="key">{{item.key}}</td>
+                        <td class="value">{{item.value}}</td>
+                    </tr>
+                </ng-container>
+            </table>
+        </div>    
+    </div>
+    <div class="right"></div>
+</div>
+</div>
