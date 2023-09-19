@@ -1,0 +1,92 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+
+.navbar {
+    box-shadow: 0 3px 3px -1px #00000085,
+        0 6px 10px #00000024,
+        0 1px 18px #0000001f;
+    z-index: 2;
+}
+
+.mat-toolbar-row,
+.mat-toolbar-single-row {
+    height: 55px;
+}
+
+.example-spacer {
+    flex: auto;
+    text-align: center;
+}
+
+$fontcolor : rgb(26, 115, 232);
+$darkgrey: #232F34;
+$darkgrey2: #1c313a;
+$lightbluegrey: #e2f1f8;
+$blueishgrey: #b0bec5;
+$lightgrey: #eeeeee;
+$dangerzone : #c62828;
+$indigo: #3f51b5;
+
+body {
+    font-family: 'Ubuntu', 'sans-serif';
+    margin: 0;
+    font-size: 14px;
+}
+
+app-root {
+    margin: 0px;
+    overflow: auto;
+    height: 100%;
+}
+
+
+header {
+    font-family: 'Ubuntu', 'sans-serif';
+    background: $darkgrey2;
+    padding: 1em 0;
+    font-size: 14px;
+    margin-top: 10px;
+
+    a {
+        color: white;
+        text-decoration: none;
+    }
+
+    nav {
+        float: right;
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            display: flex;
+
+            li a {
+                padding: 1em;
+
+                &:hover {
+                    background: darken($darkgrey2, 50%);
+                }
+            }
+
+            li button {
+                font-family: 'Ubuntu', 'sans-serif';
+                color: white;
+                background: $darkgrey2;
+                font-size: 14px;
+                border: none;
+                // padding-block: 0;
+                // padding-inline: 0;
+                padding-inline: 1em;
+                display: inline-block;
+
+                &:hover {
+                    cursor: pointer;
+                    background: darken($darkgrey2, 50%);
+                }
+            }
+        }
+    }
+}
+
