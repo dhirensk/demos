@@ -1,0 +1,45 @@
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscription, filter, map } from 'rxjs';
+import { TokenService } from '../token.service';
+import { HttpClient } from '@angular/common/http';
+
+@Component({
+  selector: 'app-validatetoken',
+  templateUrl: './validatetoken.component.html',
+  styleUrls: ['./validatetoken.component.scss']
+})
+export class ValidatetokenComponent implements OnInit, OnDestroy {
+  token: String="";
+  claims: any;
+  private claims_subscription!: Subscription;
+  private tokensubscription!: Subscription;
+  constructor(public tokenservice: TokenService, private http: HttpClient){}
+  
+  public ngOnInit(): void {
+    this.tokensubscription = this.tokenservice.getTokenSourceListener()
+      .subscribe((token)=>{
+        this.token = token;
+        // console.log(this.token)
+        this.tokenVerify(token)
+      })
+
+    this.claims_subscription = this.tokenservice.getClaimSourceListener()
+    .subscribe((claims)=>{
+      this.claims = claims;
+    })
+  }
+
+  public tokenVerify(token: string){
+    this.http.post<any>('http://localhost:3000/verify',this.token)
+      .subscribe(results =>{
+        // this.claims = results;
+        this.tokenservice.addClaims(results);
+      })
+
+  }
+
+  public ngOnDestroy(): void {
+    this.tokensubscription.unsubscribe()
+  }
+
+}
