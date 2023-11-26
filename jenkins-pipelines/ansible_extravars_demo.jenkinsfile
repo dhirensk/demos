@@ -1,0 +1,63 @@
+def extravars = [:]
+pipeline {
+    agent any   
+    parameters {
+            // PIPELINE PARAMETERS
+            choice(name: 'git_repo_name', choices: ['demos'], description: 'select the SCM source of Ansible Playbook')
+            string(name: 'credential_id', defaultValue: 'github-demo-credential', description: 'set the credential ID for git repo access')
+            string(name: 'playbook', defaultValue: 'ansible_demo.yml', description: 'playbook filename e.g. ansible_demo.yml')
+            string(name: 'tags', defaultValue: 'all', description: 'Tags')
+            // ANSIBLE EXTRAVAR PARAMETERS
+            // ansible extra vars, append ansible_extravar_ to the actual var name
+            choice(name: 'ansible_extravar_myextravar1', choices: ['1', '2'], description: 'My ansible extravar 1')
+            string(name: 'ansible_extravar_myextravar2', defaultValue: '2', description: 'My ansible extravar 2')
+        }    
+    stages {
+        stage('set ansible vars'){
+            steps{
+                script{
+                    //def extravars = [:]
+                    def tags = ''
+                    for (param in params){
+                        if(param.key.startsWith('ansible_extravar_')){
+                            param_key = param.key.split('ansible_extravar_').last()
+                            extravars.put(param_key, param.value)
+                        }
+                    }
+                }
+            }
+        }
+        stage('Checkout-Bitbucket'){
+            steps{
+                echo "testing bitbucket access"
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: 'main']],
+                    gitTool: 'git',
+                    userRemoteConfigs: [[url: "git@github.com:dhirensk/${params.git_repo_name}.git",credentialsId: "${params.credential_id}"]],
+                    extensions: [[ 
+                        $class: 'SparseCheckoutPaths',
+                        sparseCheckoutPaths: [[path: 'ansible']]
+                        ]]
+                    ])           
+            }
+        }
+        stage('Run ansible Playbook'){
+            steps{
+                //sh 'printenv'
+                dir('ansible'){
+                    ansiColor('xterm') {
+                        ansiblePlaybook( 
+                            playbook: "playbooks/${params.playbook}",
+                            inventory: 'inventory',
+                            tags: "${params.tags}", 
+                            extraVars: extravars,
+                            credentialsId: 'ansible-ssh',
+                            colorized: true
+                            ) 
+                    }                      
+                }                                     
+            }
+        }
+    }    
+}
