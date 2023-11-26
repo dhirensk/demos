@@ -1,4 +1,4 @@
-- name: json manipulation
+- name: ansible demo from jenkins
   hosts: localhost
   tasks:
     - name: print extravars
