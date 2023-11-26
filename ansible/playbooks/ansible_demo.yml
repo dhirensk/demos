@@ -1,0 +1,8 @@
+- name: json manipulation
+  hosts: localhost
+  tasks:
+    - name: print extravars
+      debug:
+        msg: 
+          - "myextravar1: {{ hostvars[inventory_hostname]['myextravar1'] }}"
+          - "myextravar2: {{ hostvars[inventory_hostname]['myextravar2'] }}"
