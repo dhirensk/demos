@@ -1,0 +1,5 @@
+[Centos-vault]
+name=CentOS-7.4.1708 - Base
+baseurl=http://vault.centos.org/7.4.1708/os/x86_64/
+gpgcheck=0
+#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7-old
