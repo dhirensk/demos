@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="IWInstaller" Language="1033" Version="1.0.0.0" Manufacturer="Teradata India Pvt. Ltd. " UpgradeCode="ec81524b-975d-47c4-8bdb-b854d2f07e8b" >
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated"/>
+    <UIRef Id="WixUI_FeatureTree"/>
+    <!-- Provides UI-->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes"/>
+    <!-- Creates a single package-->
+
+    <Feature Id="ProductFeature" Title="Incident Watcher" Level="1" Display="expand" ConfigurableDirectory="TARGETDIR">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="ProductResources" />
+    </Feature>
+    <Icon Id ="outlook.ico" SourceFile="$(var.IW)Resources\outlook.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="outlook.ico" />
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Incident Watcher" >
+          <Directory Id="Resources" Name="Resources" />
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+      <!-- <Component Id="ProductComponent"> -->
+      <!-- TODO: Insert files, registry keys, and other resources here. -->
+      <!-- </Component> -->
+      <!--https://stackoverflow.com/questions/41573413/understanding-keypath-issue-for-both-peruser-and-permachine-->
+      <Component Id="IW_VstoManifest">
+          <File Id="FILE_VstoManifest" Source="$(var.IW)" Name="IncidentWatcher.vsto" KeyPath="yes" />
+        <RegistryKey Root="HKMU" Key="Software\Microsoft\Office\Outlook\Addins\IncidentWatcher">
+          <RegistryValue Name="Description" Value="Outlook Add-In for Incident Email Monitoring" Type="string" Action="write" />
+          <RegistryValue Name="FriendlyName" Value="Incident Watcher" Type="string" Action="write" />
+          <RegistryValue Name="LoadBehavior" Value="3" Type="integer" Action="write" />
+          <RegistryValue Name="Manifest" Value="[#FILE_VstoManifest]|vstolocal" Type="string" Action="write" />
+        </RegistryKey>
+      </Component>
+      <Component Id="IW_DllManifest">
+        <File Id="FILE_DllManifest" Source="$(var.IW)" Name="IncidentWatcher.dll.Manifest" KeyPath="yes" />
+      </Component>
+      <Component Id="IW_Dll">
+        <File Id="FILE_Dll" Source="$(var.IW)" Name="IncidentWatcher.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="IW_DllConfig">
+        <File Id="FILE_DllConfig" Source="$(var.IW)" Name="IncidentWatcher.dll.config" KeyPath="yes" />
+      </Component>
+      <Component Id="MS_ToolsCommon">
+        <File Id="FILE_ToolsCommon" Source="$(var.IW)" Name="Microsoft.Office.Tools.Common.v4.0.Utilities.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="MS_ToolsOutlook">
+        <File Id="FILE_ToolsOutlook" Source="$(var.IW)" Name="Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="MS_IdentityModelLogging">
+        <File Id="FILE_IdentityModelLogging" Source="$(var.IW)" Name="Microsoft.IdentityModel.Logging.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="MS_IdentityModelTokens">
+        <File Id="FILE_IdentityModelTokens" Source="$(var.IW)" Name="Microsoft.IdentityModel.Tokens.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="MS_SharePointClient">
+        <File Id="FILE_SharePointClient" Source="$(var.IW)" Name="Microsoft.SharePoint.Client.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="MS_SharePointClientRuntime">
+        <File Id="FILE_SharePointClientRuntime" Source="$(var.IW)" Name="Microsoft.SharePoint.Client.Runtime.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="Newtonsoft">
+        <File Id="FILE_Newtonsoft" Source="$(var.IW)" Name="Newtonsoft.Json.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="IdentityModel">
+        <File Id="FILE_IdentityModel" Source="$(var.IW)" Name="System.IdentityModel.Tokens.Jwt.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="Twilio">
+        <File Id="FILE_Twilio" Source="$(var.IW)" Name="Twilio.dll" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+    <ComponentGroup Id="ProductResources" Directory="Resources">
+      <Component Id="HelpFile">
+        <File Id="FILE_Help" Source="$(var.IW)Resources\" Name="Help.docx" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_461_OR_LATER_INSTALLED" />
+    <Condition Message="This tool requires .NET Framework 4.6.1 Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_461_OR_LATER_INSTALLED]]>
+    </Condition>
+    <!--Installed from redistributable-->
+    <Property Id="VSTOR40_64R">
+      <RegistrySearch Id="VSTOR_Installed_64R"
+                      Root="HKLM" Key="SOFTWARE\Microsoft\VSTO Runtime Setup\v4R" Name="VSTORFeature_CLR40" Type="raw" />
+    </Property>
+    <!--Installed from Office 2010-->
+    <Property Id="VSTOR40_64">
+      <RegistrySearch Id="VSTOR_Installed_64"
+                      Root="HKLM" Key="SOFTWARE\Microsoft\VSTO Runtime Setup\v4" Name="Install" Type="raw" />
+    </Property>
+    <Condition Message="This tool requires the VSTO 4.0 Runtime 64bit. Please install the VSTO runtime then run this installer again.">
+      <![CDATA[Installed OR VSTOR40_64R OR VSTOR40_64]]>
+    </Condition>
+
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_461_OR_LATER_INSTALLED"/>
+    <Condition Message="This application requires .NET Framework 4.6.1">
+      <![CDATA[WIX_IS_NETFRAMEWORK_461_OR_LATER_INSTALLED]]>
+    </Condition>
+  </Fragment>
+
+</Wix>
