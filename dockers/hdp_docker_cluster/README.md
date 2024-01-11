@@ -2,7 +2,7 @@
 
 ### Preface
 
-* This is a docker based cluster setup utility for Linux/Mac based OS. This is a shell script based solution to automate creation of a dockerized cluster with added option of installing Hortonworks Data Platform. Centos7 docker image is used as base for the dockerfile. A masterscript is provided for configuring the cluster setup.
+* This is a docker based cluster setup utility for Linux/Mac based OS also compatible with windows WSL2. This is a shell script based solution to automate creation of a dockerized cluster with an option of installing Hortonworks Data Platform. centos/systemd docker image is used as base in dockerfile for custom Image creation. A masterscript is provided for provisioning the images and cluster.
 
 | Docker Containers          | Services|
 |----------------------------|------------------------------------------------------------------------------------------------------------------------|
@@ -11,20 +11,20 @@
 | datanode[1-n]              | kerbldap and namenode can password ssh datanodes|
 
 
+#### Docker Cluster in WSL
+![](wsl-docker-cluster.png?raw=true)
 
 ### Pre-Requisites 
 
 * Docker Software
 * Java JDK RPM
-* JCE (Java Cryptography Extension)
-* HDP, HDP-UTILS & Ambari Packages
+* Optional : HDP, HDP-UTILS & Ambari Packages
 
 
 ### Cluster Installation
 * Clone Repo or download Repo and extract the zip.
 * Place Java JDK RPM inside RPMS folder
-* run sudo bash masterscript.sh and select option 1 to install the cluster.
-* enter the number of datanodes to be setup e.g. 3
+* run sudo bash masterscript.sh and select option 1 to install the docker images followed by option 2 to setup a docker cluster.
 
 ### HDP Installation(mysql backend)
 
