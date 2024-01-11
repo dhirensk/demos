@@ -1,0 +1,129 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load .dockerignore
+#1 transferring context: 2B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from masternode.Dockerfile
+#2 transferring dockerfile: 2.21kB done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/centos/systemd:latest
+#3 DONE 0.4s
+
+#4 [ 1/31] FROM docker.io/centos/systemd@sha256:09db0255d215ca33710cc42e1a91b9002637eeef71322ca641947e65b7d53b58
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 119B done
+#5 DONE 0.0s
+
+#6 [ 6/31] RUN yum -y install openldap-servers-2.4.44-5.el7.x86_64 openldap-clients-2.4.44-5.el7.x86_64
+#6 CACHED
+
+#7 [ 2/31] COPY CentOS-vault.repo /etc/yum.repos.d/
+#7 CACHED
+
+#8 [11/31] RUN yum -y install krb5-server krb5-libs krb5-workstation
+#8 CACHED
+
+#9 [ 4/31] RUN ln -s /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+#9 CACHED
+
+#10 [14/31] RUN yum -y install mysql-community-server
+#10 CACHED
+
+#11 [10/31] RUN yum -y install redhat-lsb python-devel gcc rpcbind libtirpc-devel nc postgresql postgresql-libs postgresql-server
+#11 CACHED
+
+#12 [ 7/31] RUN yum -y install epel-release zip unzip openssh-server openssh-clients sshpass ntp ntpdate ntp-doc
+#12 CACHED
+
+#13 [ 5/31] RUN yum -y downgrade openldap-2.4.44-5.el7.x86_64
+#13 CACHED
+
+#14 [12/31] RUN wget https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm
+#14 CACHED
+
+#15 [13/31] RUN yum -y localinstall mysql80-community-release-el7-11.noarch.rpm
+#15 CACHED
+
+#16 [ 8/31] RUN yum -y install net-tools bind-utils telnet telnet-server httpd initscripts wget openssl man man-pages rsyslog
+#16 CACHED
+
+#17 [ 9/31] RUN yum -y install sssd sssd-client authconfig-gtk oddjob-mkhomedir
+#17 CACHED
+
+#18 [16/31] RUN mkdir -p /usr/share/java
+#18 CACHED
+
+#19 [15/31] RUN wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.2.0.zip
+#19 CACHED
+
+#20 [ 3/31] RUN rm /etc/localtime
+#20 CACHED
+
+#21 [17/31] RUN unzip -p mysql-connector-j-8.2.0.zip mysql-connector-j-8.2.0/mysql-connector-j-8.2.0.jar > /usr/share/java/mysql-connector-java.jar
+#21 CACHED
+
+#22 [18/31] RUN yum install -y mysql-server
+#22 0.818 Loaded plugins: fastestmirror, ovl
+#22 1.523 Loading mirror speeds from cached hostfile
+#22 5.535  * base: centos.mirror.net.in
+#22 5.536  * epel: mirror.01link.hk
+#22 5.538  * extras: centos.mirror.net.in
+#22 5.539  * updates: centos.mirror.net.in
+#22 10.33 Package mysql-community-server-8.0.35-1.el7.x86_64 already installed and latest version
+#22 10.33 Nothing to do
+#22 DONE 10.5s
+
+#23 [19/31] RUN chown -R ldap.ldap /var/lib/ldap
+#23 DONE 0.6s
+
+#24 [20/31] RUN mkdir /root/RPMS
+#24 DONE 0.9s
+
+#25 [21/31] COPY RPMS/*.rpm /root/RPMS/
+#25 DONE 1.2s
+
+#26 [22/31] RUN rpm -i /root/RPMS/*.rpm
+#26 0.603 warning: /root/RPMS/jdk-11.0.21_linux-x64_bin.rpm: Header V3 RSA/SHA256 Signature, key ID ec551f03: NOKEY
+#26 14.47 jexec setup failed
+#26 DONE 15.1s
+
+#27 [23/31] RUN mkdir /var/run/sshd
+#27 DONE 0.6s
+
+#28 [24/31] RUN echo 'root:root' | chpasswd
+#28 DONE 0.6s
+
+#29 [25/31] RUN sed -i 's/#PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+#29 DONE 0.8s
+
+#30 [26/31] RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+#30 DONE 0.7s
+
+#31 [27/31] RUN echo "export VISIBLE=now" >> /etc/profile
+#31 DONE 0.6s
+
+#32 [28/31] RUN systemctl enable sssd.service
+#32 0.675 Created symlink /etc/systemd/system/multi-user.target.wants/sssd.service, pointing to /usr/lib/systemd/system/sssd.service.
+#32 DONE 0.7s
+
+#33 [29/31] RUN systemctl enable ntpd.service
+#33 0.638 Created symlink /etc/systemd/system/multi-user.target.wants/ntpd.service, pointing to /usr/lib/systemd/system/ntpd.service.
+#33 DONE 0.7s
+
+#34 [30/31] RUN systemctl enable oddjobd.service
+#34 0.761 Created symlink /etc/systemd/system/multi-user.target.wants/oddjobd.service, pointing to /usr/lib/systemd/system/oddjobd.service.
+#34 DONE 0.8s
+
+#35 [31/31] RUN systemctl enable rsyslog.service
+#35 DONE 0.5s
+
+#36 exporting to image
+#36 exporting layers
+#36 exporting layers 2.9s done
+#36 writing image sha256:38c42fe4b1f85f6cf5ec1670be68e522978098f5745591c5296b836d3dbbc5ca done
+#36 naming to docker.io/library/masternode 0.0s done
+#36 DONE 2.9s

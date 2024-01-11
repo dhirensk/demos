@@ -1,0 +1,109 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load .dockerignore
+#1 transferring context: 2B done
+#1 DONE 0.1s
+
+#2 [internal] load build definition from datanode.Dockerfile
+#2 transferring dockerfile: 2.07kB done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/centos/systemd:latest
+#3 DONE 1.9s
+
+#4 [ 1/29] FROM docker.io/centos/systemd@sha256:09db0255d215ca33710cc42e1a91b9002637eeef71322ca641947e65b7d53b58
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 119B done
+#5 DONE 0.1s
+
+#6 [ 7/29] RUN rm /etc/localtime
+#6 CACHED
+
+#7 [12/29] RUN yum -y install sssd sssd-client redhat-lsb python-devel gcc rpcbind libtirpc-devel nc
+#7 CACHED
+
+#8 [24/29] RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+#8 CACHED
+
+#9 [11/29] RUN yum -y install net-tools bind-utils telnet telnet-server httpd initscripts wget openssl man man-pages rsyslog
+#9 CACHED
+
+#10 [25/29] RUN echo "export VISIBLE=now" >> /etc/profile
+#10 CACHED
+
+#11 [ 2/29] COPY CentOS-vault.repo /etc/yum.repos.d/
+#11 CACHED
+
+#12 [19/29] RUN unzip -p mysql-connector-j-8.2.0.zip mysql-connector-j-8.2.0/mysql-connector-j-8.2.0.jar > /usr/share/java/mysql-connector-java.jar
+#12 CACHED
+
+#13 [14/29] RUN mkdir -p /usr/share/java
+#13 CACHED
+
+#14 [ 3/29] RUN rm /etc/localtime
+#14 CACHED
+
+#15 [23/29] RUN sed -i 's/#PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+#15 CACHED
+
+#16 [ 4/29] RUN ln -s /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+#16 CACHED
+
+#17 [ 5/29] RUN yum -y downgrade openldap-2.4.44-5.el7.x86_64
+#17 CACHED
+
+#18 [28/29] RUN systemctl enable oddjobd.service
+#18 CACHED
+
+#19 [ 9/29] RUN yum clean all
+#19 CACHED
+
+#20 [22/29] RUN echo 'root:root' | chpasswd
+#20 CACHED
+
+#21 [18/29] RUN wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.2.0.zip
+#21 CACHED
+
+#22 [26/29] RUN systemctl enable ntpd.service
+#22 CACHED
+
+#23 [15/29] RUN mkdir /root/RPMS
+#23 CACHED
+
+#24 [16/29] COPY RPMS/*.rpm /root/RPMS/
+#24 CACHED
+
+#25 [21/29] RUN mkdir /var/run/sshd
+#25 CACHED
+
+#26 [27/29] RUN systemctl enable sssd.service
+#26 CACHED
+
+#27 [10/29] RUN yum -y install epel-release zip unzip openssh-server openssh-clients sshpass  ntp ntpdate ntp-doc
+#27 CACHED
+
+#28 [17/29] RUN mkdir -p /usr/share/java
+#28 CACHED
+
+#29 [20/29] RUN rpm -i /root/RPMS/*.rpm
+#29 CACHED
+
+#30 [13/29] RUN yum -y install krb5-libs krb5-workstation authconfig-gtk oddjob-mkhomedir postgresql postgresql-libs postgresql-server
+#30 CACHED
+
+#31 [ 8/29] RUN ln -s /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+#31 CACHED
+
+#32 [ 6/29] RUN yum -y install openldap-servers-2.4.44-5.el7.x86_64 openldap-clients-2.4.44-5.el7.x86_64
+#32 CACHED
+
+#33 [29/29] RUN systemctl enable rsyslog.service
+#33 CACHED
+
+#34 exporting to image
+#34 exporting layers done
+#34 writing image sha256:97f0c1be1fb74325fb40def76621ea97a9f2c1ffd3a78c284bd5109481b0518b done
+#34 naming to docker.io/library/datanode 0.0s done
+#34 DONE 0.0s

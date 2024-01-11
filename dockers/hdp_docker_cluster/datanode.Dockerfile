@@ -20,9 +20,11 @@ RUN yum -y install sssd sssd-client redhat-lsb python-devel gcc rpcbind libtirpc
 RUN yum -y install krb5-libs krb5-workstation authconfig-gtk oddjob-mkhomedir postgresql postgresql-libs postgresql-server
 RUN mkdir -p /usr/share/java
 RUN mkdir /root/RPMS
-COPY RPMS/* /root/RPMS/
+COPY RPMS/*.rpm /root/RPMS/
 RUN mkdir -p /usr/share/java
-COPY MYSQL/mysql-connector-java-*.jar /usr/share/java/mysql-connector-java.jar
+RUN wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.2.0.zip
+RUN unzip -p mysql-connector-j-8.2.0.zip mysql-connector-j-8.2.0/mysql-connector-j-8.2.0.jar > /usr/share/java/mysql-connector-java.jar
+# COPY MYSQL/mysql-connector-java-*.jar /usr/share/java/mysql-connector-java.jar
 RUN rpm -i /root/RPMS/*.rpm
 ENV JAVA_HOME /usr/java/latest
 

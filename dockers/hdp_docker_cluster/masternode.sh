@@ -107,7 +107,7 @@ export JAVA_HOME=/usr/java/default
 export PATH=\$JAVA_HOME/bin:\$PATH" >> /root/.bash_profile'
 	# j_home=`docker exec namenode printenv JAVA_HOME`
 	# docker exec -d namenode unzip -o -j /tmp/RPMS/jce_*.zip -d $j_home/jre/lib/security/
-	docker exec -t "$container_name" unzip -o -j /root/RPMS/jce_*.zip -d /usr/java/default/jre/lib/security/
+	# docker exec -t "$container_name" unzip -o -j /root/RPMS/jce_*.zip -d /usr/java/default/jre/lib/security/
 
 	#enable syslog  i.e. var/log/messages /var/log/secure logging
 	docker exec -d "$container_name" bash -c 'sed -i "/ModLoad imjournal/s/^/#/g" /etc/rsyslogd.conf'

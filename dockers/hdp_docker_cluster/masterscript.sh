@@ -13,7 +13,8 @@ while ! $exitloop; do
 4. Start Cluster
 5. Stop Cluster
 6. Delete Cluster
-7. Install Hortonworks Data Platform
+7. Configure mysqld on primary masternode
+8. Install Hortonworks Data Platform
 0. Exit
 
 Enter your choice : " action
@@ -357,8 +358,16 @@ admin password    : admin
 			echo "Provide Cluster name "
 		fi
 		;;
-
 	7)
+		read -p "Setup mysqld ? yes/no
+: " answer
+		if [ "$answer" == "yes" ]; then
+			docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.RunningFor}}\t{{.Status}}'
+			read -p "Provide running container name from above on which mysql is running : " namenode		
+			. ./mysql.sh $namenode
+		fi
+		;;
+	8)
 		read -p "Install HDP Ambari Server ? yes/no
 : " answer
 		if [ "$answer" == "yes" ]; then
@@ -366,14 +375,14 @@ admin password    : admin
 1. ~/Downloads/HDP-UTILS-<version>-centos7.tar
 2. ~/Downloads/HDP-<version>-centos7-rpm.tar
 3. ~/Downloads/ambari-<version>-centos7.tar
-4. Update mysqlhdp.sh file accordingly as per the package versions
+4. Update hdp.sh file accordingly as per the package versions
 "
 			read -p "Continue? yes/no
   : " value
 			if [ "$value" == "yes" ]; then
 			docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.RunningFor}}\t{{.Status}}'
 			read -p "Provide running container name from above on which Ambari is to be installed : " namenode
-			. ./mysqlhdp.sh $namenode
+			. ./hdp.sh $namenode
 			fi
 		fi
 		;;

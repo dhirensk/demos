@@ -14,15 +14,18 @@ RUN yum -y install net-tools bind-utils telnet telnet-server httpd initscripts w
 RUN yum -y install sssd sssd-client authconfig-gtk oddjob-mkhomedir
 RUN yum -y install redhat-lsb python-devel gcc rpcbind libtirpc-devel nc postgresql postgresql-libs postgresql-server
 RUN yum -y install krb5-server krb5-libs krb5-workstation 
-RUN wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
-RUN rpm -ivh mysql-community-release-el7-5.noarch.rpm
-COPY MYSQL/my.cnf /etc/
-COPY MYSQL/mysql-connector-java-*.jar /usr/share/java/mysql-connector-java.jar
+RUN wget https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm
+RUN yum -y localinstall mysql80-community-release-el7-11.noarch.rpm
+RUN yum -y install mysql-community-server
+RUN wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.2.0.zip
+RUN mkdir -p /usr/share/java
+RUN unzip -p mysql-connector-j-8.2.0.zip mysql-connector-j-8.2.0/mysql-connector-j-8.2.0.jar > /usr/share/java/mysql-connector-java.jar
+# COPY MYSQL/my.cnf /etc/
+# COPY MYSQL/mysql-connector-java-*.jar /usr/share/java/mysql-connector-java.jar
 RUN yum install -y mysql-server
 RUN chown -R ldap.ldap /var/lib/ldap
-RUN mkdir -p /usr/share/java
 RUN mkdir /root/RPMS
-COPY RPMS/* /root/RPMS/
+COPY RPMS/*.rpm /root/RPMS/
 RUN rpm -i /root/RPMS/*.rpm
 ENV JAVA_HOME /usr/java/latest
  
