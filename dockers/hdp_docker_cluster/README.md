@@ -6,9 +6,9 @@
 
 | Docker Containers          | Services|
 |----------------------------|------------------------------------------------------------------------------------------------------------------------|
-| Common Servies & Utilities | ssh, telnet, jdk 1.8, ntp, systemd, rsyslog, httpd, ssl, kerberos client, sssd, authconfig, network,wget, IST Timezone|
-| namenode                   | mysql server, kerberos server, kadmin server, openldap server |
-| datanode[1-n]              | kerbldap and namenode can password ssh datanodes|
+| Common Servies & Utilities across all nodes | ssh, telnet, jdk 1.8, ntp, systemd, rsyslog, httpd, ssl, kerberos client, sssd, authconfig, network,wget, IST Timezone|
+| namenode[1]                   | mysql server, kerberos server, kadmin server, openldap server |
+| namenode[n]                   | openldap server |
 
 
 #### Docker Cluster in WSL
