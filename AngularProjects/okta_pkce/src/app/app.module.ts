@@ -16,8 +16,8 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 
 const oktaAuth = new OktaAuth({
-  issuer: 'https://dev-45061733.okta.com/oauth2/aus64hhbp70XUaSIN5d7',
-  clientId: '0oa64hdgz2uKuv80c5d7',
+  issuer: 'https://dev-13511724.okta.com/oauth2/ausfg0h3ttKW1i4R45d7',
+  clientId: '0oafg0e3qhPkjd43y5d7',
   redirectUri: window.location.origin + '/login/callback',
   postLogoutRedirectUri: window.location.origin + '/signout'
 });

@@ -5,10 +5,10 @@ const app = express();
 const bodyParser = require('body-parser');
 
 const expectedAud = "AngularSPA"
-const expectClientid = "0oa64hdgz2uKuv80c5d7"
+const expectClientid = "0oafg0e3qhPkjd43y5d7"
 const nonce = "this_is_a_test_nonce_999999"
 const oktaJwtVerifier = new OktaJwtVerifier({
-  issuer: 'https://dev-45061733.okta.com/oauth2/aus64hhbp70XUaSIN5d7' // issuer required
+  issuer: 'https://dev-13511724.okta.com/oauth2/ausfg0h3ttKW1i4R45d7' // issuer required
 });
 
 app.use(bodyParser.json())
