@@ -1,6 +1,10 @@
 @Library('pr-validate-yaml')
 import com.dhirensk.ValidateYaml
 
+/*
+* This jenkinsfile pipeline is to be hosted in a bitbucket repository
+*/
+
 properties([
   pipelineTriggers([
     bitBucketTrigger(
