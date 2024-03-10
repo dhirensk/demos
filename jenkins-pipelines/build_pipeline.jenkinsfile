@@ -1,4 +1,4 @@
-@Library('yaml-validator')
+@Library('pr-validate-yaml')
 import com.dhirensk.ValidateYaml
 
 properties([
