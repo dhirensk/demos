@@ -1,0 +1,92 @@
+@Library('yaml-validator')
+import com.dhirensk.ValidateYaml
+
+properties([
+  pipelineTriggers([
+    bitBucketTrigger(
+      triggers: [
+        [
+          $class: 'BitBucketPPRPullRequestTriggerFilter',
+          actionFilter: [
+            $class: 'BitBucketPPRPullRequestCreatedActionFilter',
+            allowedBranches: 'master'
+            ]
+        ],
+        [
+          $class: 'BitBucketPPRPullRequestTriggerFilter',
+          actionFilter: [
+            $class: 'BitBucketPPRPullRequestUpdatedActionFilter',
+            allowedBranches: 'master'
+            ]
+        ]
+      ]
+    )
+  ])
+])
+
+pipeline { 
+  agent any
+  parameters {
+    string(name: 'bitbucketAccessTokenCredentialId',
+      defaultValue: 'bitbucket-access-token',
+      description: 'Jenkins credentialId for accessing Bitbucket via Access Token')
+    string(name: 'bitbucketPrivateKeyCredentialId',
+      defaultValue: 'bitbucket-privatekey',
+      description: 'Jenkins private ssh key for accessing Bitbucket Repo')
+  }    
+  stages {
+    stage('Print Env Vars for Cloud Pull Request') {
+      steps {
+        echo 'Building...'
+
+        echo 'Env vars for cloud pull request...'
+        echo "BITBUCKET_SOURCE_BRANCH ${env.BITBUCKET_SOURCE_BRANCH}"
+        echo "BITBUCKET_TARGET_BRANCH ${env.BITBUCKET_TARGET_BRANCH}"
+        echo "BITBUCKET_PULL_REQUEST_LINK ${env.BITBUCKET_PULL_REQUEST_LINK}"
+        echo "BITBUCKET_PULL_REQUEST_ID ${env.BITBUCKET_PULL_REQUEST_ID}"
+        echo "BITBUCKET_PAYLOAD ${env.BITBUCKET_PAYLOAD}"
+
+        // echo 'Env vars for cloud push...'
+        // echo "REPOSITORY_LINK ${env.REPOSITORY_LINK}"
+        // echo "BITBUCKET_SOURCE_BRANCH ${env.BITBUCKET_SOURCE_BRANCH}"
+        // echo "BITBUCKET_REPOSITORY_URL ${env.BITBUCKET_REPOSITORY_URL}"
+        // echo "BITBUCKET_PUSH_REPOSITORY_UUID ${env.BITBUCKET_PUSH_REPOSITORY_UUID}"
+        // echo "BITBUCKET_PAYLOAD ${env.BITBUCKET_PAYLOAD}"
+
+        // echo 'Env vars for server push...'
+        // echo "REPOSITORY_LINK ${env.REPOSITORY_LINK}"
+        // echo "BITBUCKET_SOURCE_BRANCH ${env.BITBUCKET_SOURCE_BRANCH}"
+        // echo "BITBUCKET_REPOSITORY_URL ${env.BITBUCKET_REPOSITORY_URL}"
+        // echo "BITBUCKET_PUSH_REPOSITORY_UUID ${env.BITBUCKET_PUSH_REPOSITORY_UUID}"
+        // echo "BITBUCKET_PAYLOAD ${env.BITBUCKET_PAYLOAD}"
+      }
+    }
+    stage('checkout Bitbucket source branch of Pull Request') {
+      steps {
+        checkout([
+            $class: 'GitSCM',
+            branches: [[name: "${BITBUCKET_SOURCE_BRANCH}"]],
+            gitTool: '/usr/bin/git',
+            userRemoteConfigs: [[url: 'git@bitbucket.org:dhirensk/devrepo.git', credentialsId: bitbucketPrivateKeyCredentialId]],
+            extensions: [[
+                $class: 'SparseCheckoutPaths',
+                sparseCheckoutPaths: [[path: 'ansible']]
+            ]]
+          ])
+      }
+    }
+    stage('Build Pull Request') {
+      steps {
+        script {
+          def yamlvalidator = new ValidateYaml(steps, env, params.bitbucketAccessTokenCredentialId)
+          if (yamlvalidator.validate(env.BITBUCKET_PAYLOAD)) {
+            currentBuild.result = 'SUCCESS'
+          }
+          else {
+            currentBuild.result = 'FAILED'
+          }
+        }
+      }
+    }
+  }
+}
