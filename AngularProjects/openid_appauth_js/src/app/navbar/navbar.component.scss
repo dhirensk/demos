@@ -1,0 +1,25 @@
+@use '@angular/material' as mat;
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:host {
+  @include mat.toolbar-overrides((
+    container-background-color: var(--mat-sys-primary),
+    container-text-color: var(--mat-sys-on-primary),
+  ));
+
+}
+
+mat-toolbar {
+  @include mat.button-overrides((
+    text-hover-state-layer-opacity: 0.1,
+    text-state-layer-color: var(--mat-sys-on-primary),
+  ));
+
+}
+
+.navbar {
+    box-shadow: 0 3px 3px -1px #00000085;
+    // position: absolute;
+    position: sticky;
+    top: 0;
+}
