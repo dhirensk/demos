@@ -1,27 +1,19 @@
-# Frontend
+# OKTA Authorization Code flow with PKCE using Angular and NodeJS
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.1.
+### Description
 
-## Development server
+This project demonstrates Authorization code Flow with PKCE with OKTA Authorization Server. This repo uses Okta provided Angular and NodeJS library.
+* Client - Angular
+* Resource Server - NodeJS
+* Authorization Server - Okta App 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+#### User login
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+<p align="center"> <img  src="src/assets/okta_login.png?raw=true"> </p>
 
-## Build
+#### Redirect
+<p align="center"> <img  src="src/assets/okta_redirect.png?raw=true"> </p>
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+#### Token Verify
+<p align="center"> <img  src="src/assets/okta_verify.png?raw=true"> </p>
