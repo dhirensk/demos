@@ -8,7 +8,7 @@ import { ValidatetokenComponent } from './validatetoken/validatetoken.component'
 
 const routes: Routes = [
  {path: '', component: LoginComponent},
- { path: 'login/callback', component: OktaCallbackComponent },
+ { path: 'callback', component: OktaCallbackComponent },
  { path: 'signout', component: SignoutpageComponent},
  { path: 'validate', component:ValidatetokenComponent}
 ];

@@ -53,17 +53,28 @@
               ],
               "outputHashing": "all"
             },
-            "development": {
+            "pingfed": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
+                  "with": "src/environments/environment.pingfed.ts"
                 }
               ]
-            }
+            },
+            "okta": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.okta.ts"
+                }
+              ]
+            }            
           },
           "defaultConfiguration": "production"
         },
@@ -73,11 +84,14 @@
             "production": {
               "buildTarget": "oauthdemo:build:production"
             },
-            "development": {
-              "buildTarget": "oauthdemo:build:development"
-            }
+            "okta": {
+              "buildTarget": "oauthdemo:build:okta"
+            },
+            "pingfed": {
+              "buildTarget": "oauthdemo:build:pingfed"
+            }            
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "okta"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

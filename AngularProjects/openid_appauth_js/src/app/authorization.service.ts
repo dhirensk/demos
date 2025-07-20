@@ -35,6 +35,7 @@ export class AuthorizationService {
   private redirect_uri = environment.oauthConfig.redirect_uri
   private client_id = environment.oauthConfig.client_id
   private client_secret = environment.oauthConfig.client_secret
+  private pfidpadapterid = environment.oauthConfig.pfidpadapterid
   private configurationListener = new Subject<AuthorizationServiceConfiguration>();
   private configuration!: AuthorizationServiceConfiguration;
   private tokenResponseListener = new Subject<TokenResponse>();
@@ -65,13 +66,18 @@ export class AuthorizationService {
         // this configuration is lost after the redirect and service is not having any data.
         // this.configuration = configuration;  
         // console.log(this.configuration);
+        const extras: StringMap = {'prompt': 'consent', 'access_type': 'offline'};
+        if (environment.oauthConfig.pfidpadapterid){
+          extras['pfidpadapterid'] = environment.oauthConfig.pfidpadapterid
+        }
+
         let request = new AuthorizationRequest({
           client_id: this.client_id,
           redirect_uri: this.redirect_uri,
           scope: this.scope,
           response_type: AuthorizationRequest.RESPONSE_TYPE_CODE,
           state: undefined,
-          extras: { 'prompt': 'consent', 'access_type': 'offline' }
+          extras: extras
         });
         this.authorizationHandler.performAuthorizationRequest(configuration, request);
         // this will redirect the page to callback path if successful and returns the code param
@@ -91,7 +97,7 @@ export class AuthorizationService {
           this.authorizationcode = response.code;
           const tokenHandler = new BaseTokenRequestHandler(this.requestor);
           const extras: StringMap = {};
-          extras['client_secret'] = this.client_secret;
+          // extras['client_secret'] = this.client_secret;
           if (request.internal) {
             extras['code_verifier'] = request.internal['code_verifier'];
           }
