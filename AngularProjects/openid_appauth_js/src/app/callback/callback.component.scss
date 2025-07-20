@@ -1,0 +1,44 @@
+
+
+@use '@angular/material' as mat;
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:host {
+  @include mat.table-overrides((
+    background-color: white,
+    row-item-label-text-color: var(--mat-sys-on-surface),
+    row-item-label-text-size: var(--mat-sys-body-small-size),
+    row-item-label-text-line-height: var(--mat-sys-body-small-line-height),
+    row-item-container-height: 20px
+  ));
+  @include mat.theme((
+    typography: (
+      plain-family: Roboto
+    )
+  ));
+};
+
+.header {
+    font: var(--mat-sys-label-medium);
+    width: 50%;
+    margin: 1em auto 1em;
+    text-align: center;
+};
+
+table {
+    min-width: 30%;
+    margin: 1em auto;
+    margin-bottom: 2em;
+};
+
+
+.mat-column-value {
+    width: 200px;
+    max-width: 500px;
+    word-wrap: break-word !important;  
+};
+
+.mat-column-key {
+    max-width: 200px;
+    width: 200px;
+};
