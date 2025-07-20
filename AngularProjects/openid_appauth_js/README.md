@@ -1,59 +1,34 @@
-# Oauthdemo
+# Authorization Code flow with PKCE using @openid/appauth
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+### Description
 
-## Development server
+This project demonstrates Authorization code Flow with PKCE using @openid/appauth npm library. This repo can be used to test Oauth PKCE flow against any authorization server such as PingFederate, OKTA, KeyCloak etc
 
-To start a local development server, run:
+* Client - Angular
+* Authorization Server - Okta/PingFederate etc. 
+* Note: This demo does not include any resource server. The minimal requirements for a Resource server would be to validate the incoming incoming token in the request via introspect and map the claims to appropriate resource and send the requested resource to the client with required CORS Response headers.
 
-```bash
-ng serve
-```
+### PingFederate Authorization Server
+#### User login
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+<p align="center"> <img  src="src/assets/ping_login.png?raw=true"> </p>
 
-## Code scaffolding
+#### User Consent
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+<p align="center"> <img  src="src/assets/ping_consent.png?raw=true"> </p>
 
-```bash
-ng generate component component-name
-```
+#### Redirect
+<p align="center"> <img  src="src/assets/ping_redirect.png?raw=true"> </p>
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-```bash
-ng generate --help
-```
+### Okta Authorization Server
+#### User login
 
-## Building
+<p align="center"> <img  src="src/assets/okta_login.png?raw=true"> </p>
 
-To build the project run:
+#### User Consent
 
-```bash
-ng build
-```
+<p align="center"> <img  src="src/assets/okta_consent.png?raw=true"> </p>
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+#### Redirect
+<p align="center"> <img  src="src/assets/okta_redirect.png?raw=true"> </p>
